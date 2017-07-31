@@ -2,7 +2,7 @@
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul>
-        <li v-for="(item,index) in goods" class="menu-item" :class="{'current':currentIndex===index}" @click="selectMenu">
+        <li v-for="(item,index) in goods" class="menu-item" :class="{'current':currentIndex===index}" @click="selectMenu(index, $event)">
           <span class="text border-1px">
             <span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
           </span>
@@ -11,7 +11,7 @@
     </div>
     <div class="foods-wrapper" ref="foodsWrapper">
       <ul>
-        <li v-for="item in goods" class="food-list food-list-hook">
+        <li v-for="item in goods" class="food-list food-list-hook" ref="foodList">
           <h1 class="title">{{item.name}}</h1>
           <ul>
             <li v-for="food in item.foods" class="food-item">
@@ -37,11 +37,15 @@
         </li>
       </ul>
     </div>
+    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice">
+
+    </shopcart>
   </div>
 </template>
 
 <script type='text/babel'>
 import BScroll from 'better-scroll';
+import shopcart from 'components/shopcart/shopcart';
 
 const ERR_OK = 0;
 
@@ -51,6 +55,9 @@ export default {
       type: Object
     }
   },
+  components: {
+    shopcart
+  },
   data() {
     return {
       goods: [],
@@ -59,11 +66,19 @@ export default {
     };
   },
   methods: {
-    selectMenu (index) {
-
+    selectMenu(index, event) {
+      // 非内建事件直接返回, 后面不执行
+      if (!event._constructed) {
+        return;
+      }
+      let foodList = this.$refs.foodList;
+      let el = foodList[index];
+      this.foodsScroll.scrollToElement(el, 300);
     },
     _initScroll() {
-      this.menuScroll = new BScroll(this.$refs.menuWrapper, {});
+      this.menuScroll = new BScroll(this.$refs.menuWrapper, {
+        click: true
+      });
       this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
         probeType: 3
       });
