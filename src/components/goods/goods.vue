@@ -31,14 +31,17 @@
                     ￥{{food.oldPrice}}
                   </span>
                 </div>
+                <div class="cartcontrol-wrapper">
+                  <cartcontrol :food='food' @add='addFood'></cartcontrol>
+                </div>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice">
-
+    <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :select-foods="selectFoods"  ref="shopcart">
+  
     </shopcart>
   </div>
 </template>
@@ -46,6 +49,7 @@
 <script type='text/babel'>
 import BScroll from 'better-scroll';
 import shopcart from 'components/shopcart/shopcart';
+import cartcontrol from 'components/cartcontrol/cartcontrol';
 
 const ERR_OK = 0;
 
@@ -56,7 +60,8 @@ export default {
     }
   },
   components: {
-    shopcart
+    shopcart,
+    cartcontrol
   },
   data() {
     return {
@@ -80,6 +85,7 @@ export default {
         click: true
       });
       this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
+        click: true,
         probeType: 3
       });
       this.foodsScroll.on('scroll', (pos) => {
@@ -95,6 +101,16 @@ export default {
         height += item.clientHeight;
         this.listHeight.push(height);
       }
+    },
+    addFood(target) {
+      this._drop(target);
+    },
+    _drop(target) {
+      // 异步执行下落动画
+      this.$nextTick(() => {
+        // 利用$refs可调取子组件及其方法
+        this.$refs.shopcart.drop(target);
+      })
     }
   },
   computed: {
@@ -106,6 +122,17 @@ export default {
           return i
         }
       }
+    },
+    selectFoods() {
+      let foods = [];
+      this.goods.forEach(function (good) {
+        good.foods.forEach(function (food) {
+          if (food.count) {
+            foods.push(food);
+          }
+        }, this)
+      }, this)
+      return foods;
     }
   },
   created() {
