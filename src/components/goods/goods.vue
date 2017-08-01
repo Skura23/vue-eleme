@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="goods">
     <div class="menu-wrapper" ref="menuWrapper">
       <ul>
@@ -14,7 +15,7 @@
         <li v-for="item in goods" class="food-list food-list-hook" ref="foodList">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item">
+            <li v-for="food in item.foods" class="food-item" @click="selectFood(food, $event)">
               <div class="icon">
                 <img width="57" height="57" :src="food.icon">
               </div>
@@ -41,15 +42,17 @@
       </ul>
     </div>
     <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :select-foods="selectFoods"  ref="shopcart">
-  
     </shopcart>
   </div>
+  <food :food="selectedFood" ref="food"></food>
+</div>
 </template>
 
 <script type='text/babel'>
 import BScroll from 'better-scroll';
 import shopcart from 'components/shopcart/shopcart';
 import cartcontrol from 'components/cartcontrol/cartcontrol';
+import food from 'components/food/food'
 
 const ERR_OK = 0;
 
@@ -61,16 +64,25 @@ export default {
   },
   components: {
     shopcart,
-    cartcontrol
+    cartcontrol,
+    food
   },
   data() {
     return {
       goods: [],
       listHeight: [],
-      scrollY: 0
+      scrollY: 0,
+      selectedFood: {}
     };
   },
   methods: {
+    selectFood(food, event) {
+      if (!event._constructed) {
+        return;
+      }
+      this.selectedFood = food;
+      this.$refs.food.show();
+    },
     selectMenu(index, event) {
       // 非内建事件直接返回, 后面不执行
       if (!event._constructed) {
