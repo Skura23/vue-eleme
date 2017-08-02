@@ -15,7 +15,6 @@
     <keep-alive>
       <router-view :seller='seller'></router-view>
     </keep-alive>
-    <div class="content">content</div>
   </div>
 </template>
 

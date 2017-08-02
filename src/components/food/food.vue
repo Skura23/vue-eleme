@@ -34,10 +34,10 @@
         </div>
         <div class="rating">
           <h1 class="title">商品评价</h1>
-          <ratingselect :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings"></ratingselect>
+          <ratingselect :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings" @select="selectRating" @toggle="toggleContent"></ratingselect>
           <div class="rating-wrapper">
             <ul v-show="food.ratings && food.ratings.length">
-              <li v-for="rating in food.ratings" class="rating-item border-1px">
+              <li v-show="needShow(rating.rateType, rating.text)" v-for="rating in food.ratings" class="rating-item border-1px">
                 <div class="user">
                   <span class="name">{{rating.username}}</span>
                   <img class="avatar" width="12" height="12" :src="rating.avatar">
@@ -59,12 +59,15 @@
 <script type='text/babel'>
 import BScroll from 'better-scroll';
 import Vue from 'vue';
+// 非default的export
+import {formatDate} from 'common/js/date';
 import cartcontrol from 'components/cartcontrol/cartcontrol';
 import ratingselect from 'components/ratingselect/ratingselect';
 import split from 'components/split/split';
 
-// const POSITIVE = 0;
-// const NEGATIVE = 1;
+/* eslint-disable no-unused-vars */
+const POSITIVE = 0;
+const NEGATIVE = 1;
 const ALL = 2;
 
 export default {
@@ -81,9 +84,15 @@ export default {
       desc: {
         all: '全部',
         positive: '推荐',
-        negative: ''
+        negative: '吐槽'
       }
 
+    }
+  },
+  filters: {
+    formatDate(time) {
+      let date = new Date(time);
+      return formatDate(date, 'yyyy-MM-dd hh:mm');
     }
   },
   methods: {
@@ -92,6 +101,8 @@ export default {
     },
     show() {
       this.showFlag = true;
+      this.selectType = ALL;
+      this.onlyContent = false;
       this.$nextTick(() => {
         if (!this.scroll) {
           this.scroll = new BScroll(this.$refs.food, {
@@ -108,6 +119,29 @@ export default {
       }
       this.$emit('add', event.target);
       Vue.set(this.food, 'count', 1);
+    },
+    selectRating(type) {
+      this.selectType = type;
+      this.$nextTick(() => {
+        this.scroll.refresh();
+      });
+    },
+    toggleContent() {
+      this.onlyContent = !this.onlyContent;
+      this.$nextTick(() => {
+        this.scroll.refresh();
+      });
+    },
+    needShow(type, text) {
+      if (this.onlyContent && !text) {
+        return false;
+      }
+      if (this.selectType === ALL) {
+        return true;
+      } else {
+        console.log(type);
+        return type === this.selectType;
+      }
     }
   },
   components: {
