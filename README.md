@@ -11,6 +11,7 @@ A small app imitated from Elem(饿了么) app.
 PC: https://skura23.github.io/vue-eleme
 
 Phone side: 
+
 ![](http://qr.api.cli.im/qr?data=https%253A%252F%252Fskura23.github.io%252Fvue-eleme&level=H&transparent=false&bgcolor=%23ffffff&forecolor=%23000000&blockpixel=12&marginblock=1&logourl=&size=280&kid=cliim&key=40cf4a33c0719ad2af3ddcb309c61af9)
 
 ## Usage
