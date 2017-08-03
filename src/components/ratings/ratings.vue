@@ -56,11 +56,13 @@
 </template>
 
 <script type="text/babel">
+ /* eslint-disable no-unused-vars */
   import BScroll from 'better-scroll';
   import {formatDate} from 'common/js/date';
   import star from 'components/star/star';
   import ratingselect from 'components/ratingselect/ratingselect';
   import split from 'components/split/split';
+  import axios from 'axios';
 
   const ALL = 2;
   const ERR_OK = 0;
@@ -79,17 +81,15 @@
       };
     },
     created() {
-      this.$http.get('/api/ratings').then((response) => {
-        response = response.body;
-        if (response.errno === ERR_OK) {
-          this.ratings = response.data;
-          this.$nextTick(() => {
-            this.scroll = new BScroll(this.$refs.ratings, {
-              click: true
-            });
-          });
-        }
-      });
+      axios.get('static/data.json').then((res) => {
+        this.ratings = res.data.ratings
+        // this.seller = res.data.seller
+        this.$nextTick(() => {
+          this.scroll = new BScroll(this.$refs.ratings, {
+            click: true
+          })
+        })
+      })
     },
     methods: {
       needShow(type, text) {

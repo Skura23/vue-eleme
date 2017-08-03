@@ -48,12 +48,13 @@
 </div>
 </template>
 
-<script type='text/babel'>
+ <script type='text/babel'>
+ /* eslint-disable no-unused-vars */
 import BScroll from 'better-scroll';
 import shopcart from 'components/shopcart/shopcart';
 import cartcontrol from 'components/cartcontrol/cartcontrol';
-import food from 'components/food/food'
-
+import food from 'components/food/food';
+import axios from 'axios';
 const ERR_OK = 0;
 
 export default {
@@ -150,16 +151,13 @@ export default {
   created() {
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
 
-    this.$http.get('/api/goods').then((response) => {
-      response = response.body;
-      if (response.errno === ERR_OK) {
-        this.goods = response.data;
-        this.$nextTick(() => {
-          this._initScroll();
-          this._calculateHeight();
-        })
-      }
-    })
+    axios.get('static/data.json').then((res) => {
+      this.goods = res.data.goods
+      this.$nextTick(() => {
+        this._initScroll(); // 初始化scroll
+        this._calculateHeight(); // 初始化列表高度列表
+      })
+    });
   }
 }
 </script>

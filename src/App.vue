@@ -18,8 +18,10 @@
   </div>
 </template>
 
-<script type="text/babel">
+ <script type="text/babel">
+ /* eslint-disable no-unused-vars */
 import header from './components/header/header.vue'
+import axios from 'axios';
 
 const ERR_OK = 0;
 
@@ -33,12 +35,8 @@ export default {
   },
   // 处理mock数据
   created () {
-    this.$http.get('/api/seller').then((response) => {
-      response = response.body;
-      if (response.errno === ERR_OK) {
-        this.seller = response.data;
-        console.log(this.seller);
-      }
+    axios.get('static/data.json').then((res) => {
+      this.seller = res.data.seller
     })
   },
   components: {
